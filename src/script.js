@@ -173,12 +173,14 @@ class Keyboard {
       this.keyboard.querySelectorAll('div').forEach((key, index) => {
         const settings = englishLayout[index];
         key.innerText = settings[size];
+        key.name = settings[size];
       });
     }
     if (language === 'rus') {
       this.keyboard.querySelectorAll('div').forEach((key, index) => {
         const settings = russianLayout[index];
         key.innerText = settings[size];
+        key.name = settings[size];
       });
     }
     this.capsLockIndicator();
@@ -190,10 +192,59 @@ class Keyboard {
     indicator.classList.add('indicator');
     indicator.id = 'indicator';
     capsLock.appendChild(indicator);
+  }
 
+  handleEvents(code, type) {
+    const key = document.getElementById(code);
+    if (type === 'keydown' || type === 'mousedown') key.classList.add('active');
+    if (type === 'keyup' || type === 'mouseup') key.classList.remove('active');
+
+    switch (key.name) {
+      case 'Ctrl':
+        break;
+
+      case 'Enter':
+        if (type === 'mousedown' || type === 'keydown') {
+          this.textarea.value += '\n';
+        }
+        break;
+
+      case 'Backspace':
+        if (type === 'mousedown' || type === 'keydown') {
+          this.textarea.value = this.textarea.value.slice(0, -1);
+        }
+        break;
+
+      default:
+        if (type === 'mousedown' || type === 'keydown') {
+          this.textarea.value += key.innerText;
+        }
+    }
   }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
   const keyBoard = new Keyboard();
+
+  keyBoard.keyboard.addEventListener('mousedown', (el) => {
+    el.preventDefault();
+    keyBoard.textarea.focus();
+    if (el.target.classList.contains('key')) {
+      keyBoard.handleEvents(el.target.id, el.type);
+    }
+  });
+
+  keyBoard.keyboard.addEventListener('mouseup', (el) => {
+    keyBoard.handleEvents(el.target.id, el.type);
+  });
+
+  document.addEventListener('keydown', (el) => {
+    el.preventDefault();
+    keyBoard.textarea.focus();
+    keyBoard.handleEvents(el.code, el.type);
+  });
+
+  document.addEventListener('keyup', (el) => {
+    keyBoard.handleEvents(el.code, el.type);
+  });
 });

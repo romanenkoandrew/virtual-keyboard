@@ -42,6 +42,12 @@
   color: #fff;
   background-color: grey;
   position: relative;
+  transition: all 0.3s;
+}
+.active {
+  border-radius: 45%;
+  background-color: green;
+  color: #000;
 }
 
 .indicator {
