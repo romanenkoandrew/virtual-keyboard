@@ -181,6 +181,16 @@ class Keyboard {
         key.innerText = settings[size];
       });
     }
+    this.capsLockIndicator();
+  }
+
+  capsLockIndicator() {
+    const capsLock = this.keyboard.querySelector('#CapsLock');
+    const indicator = document.createElement('span');
+    indicator.classList.add('indicator');
+    indicator.id = 'indicator';
+    capsLock.appendChild(indicator);
+
   }
 }
 
