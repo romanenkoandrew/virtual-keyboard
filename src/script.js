@@ -40,7 +40,7 @@ const englishLayout = [
   [';', ':', 4, 'Semicolon'],
   ["'", '"', 4, 'Quote'],
   ['Enter', 'Enter', 9, 'Enter'],
-  ['Shift', 'Shift', 7, 'ShiftLeft'],
+  ['Shift', 'Shift', 8, 'ShiftLeft'],
   ['z', 'Z', 4, 'KeyZ'],
   ['x', 'X', 4, 'KeyX'],
   ['c', 'C', 4, 'KeyC'],
@@ -51,15 +51,15 @@ const englishLayout = [
   [',', '<', 4, 'Comma'],
   ['.', '>', 4, 'Period'],
   ['/', '?', 4, 'Slash'],
-  ['▲', '▲', 4, 'ArrowUp'],
+  ['▲', '▲', 3, 'ArrowUp'],
   ['Shift', 'Shift', 9, 'ShiftRight'],
   ['Ctrl', 'Ctrl', 5, 'ControlLeft'],
   ['En', 'En', 4, 'Lang'],
   ['Alt', 'Alt', 4, 'AltLeft'],
-  ['Space', 'Space', 26, 'Space'],
+  ['Space', 'Space', 27, 'Space'],
   ['Alt', 'Alt', 4, 'AltRight'],
   ['◄', '◄', 4, 'ArrowLeft'],
-  ['▼', '▼', 4, 'ArrowDown'],
+  ['▼', '▼', 3, 'ArrowDown'],
   ['►', '►', 4, 'ArrowRight'],
   ['Ctrl', 'Ctrl', 5, 'ControlRight'],
 ];
@@ -106,7 +106,7 @@ const russianLayout = [
   ['ж', 'Ж', 4, 'Semicolon'],
   ['э', 'Э', 4, 'Quote'],
   ['Enter', 'Enter', 9, 'Enter'],
-  ['Shift', 'Shift', 7, 'ShiftLeft'],
+  ['Shift', 'Shift', 8, 'ShiftLeft'],
   ['я', 'Я', 4, 'KeyZ'],
   ['ч', 'Ч', 4, 'KeyX'],
   ['с', 'С', 4, 'KeyC'],
@@ -117,15 +117,73 @@ const russianLayout = [
   ['б', 'Б', 4, 'Comma'],
   ['ю', 'Ю', 4, 'Period'],
   ['.', ',', 4, 'Slash'],
-  ['▲', '▲', 4, 'ArrowUp'],
+  ['▲', '▲', 3, 'ArrowUp'],
   ['Shift', 'Shift', 9, 'ShiftRight'],
   ['Ctrl', 'Ctrl', 5, 'ControlLeft'],
   ['Ru', 'Ru', 4, 'Lang'],
   ['Alt', 'Alt', 4, 'AltLeft'],
-  ['Space', 'Space', 26, 'Space'],
+  ['Space', 'Space', 27, 'Space'],
   ['Alt', 'Alt', 4, 'AltRight'],
   ['◄', '◄', 4, 'ArrowLeft'],
-  ['▼', '▼', 4, 'ArrowDown'],
+  ['▼', '▼', 3, 'ArrowDown'],
   ['►', '►', 4, 'ArrowRight'],
   ['Ctrl', 'Ctrl', 5, 'ControlRight'],
 ];
+
+class Keyboard {
+  constructor() {
+    this.language = 'eng';
+    this.createKeyboard();
+  }
+
+  createKeyboard() {
+    const container = document.createElement('div');
+    this.textarea = document.createElement('textarea');
+    this.keyboard = document.createElement('div');
+
+    container.classList.add('container');
+    container.id = 'container';
+
+    this.textarea.classList.add('textarea');
+    this.textarea.setAttribute('placeholder', 'This keyboard was created on Windows');
+    this.textarea.id = 'textarea';
+
+    this.keyboard.classList.add('keyboard');
+    this.keyboard.id = 'keyboard';
+
+    this.createKeys();
+    this.createKeysText(this.language, 0);
+    container.appendChild(this.textarea);
+    container.appendChild(this.keyboard);
+    document.body.appendChild(container);
+  }
+
+  createKeys() {
+    englishLayout.forEach((x) => {
+      const key = document.createElement('div');
+      key.classList.add('key');
+      key.id = `${x[3]}`;
+      key.style.gridColumn = `span ${x[2]}`;
+      this.keyboard.appendChild(key);
+    });
+  }
+
+  createKeysText(language, size) {
+    if (language === 'eng') {
+      this.keyboard.querySelectorAll('div').forEach((key, index) => {
+        const settings = englishLayout[index];
+        key.innerText = settings[size];
+      });
+    }
+    if (language === 'rus') {
+      this.keyboard.querySelectorAll('div').forEach((key, index) => {
+        const settings = russianLayout[index];
+        key.innerText = settings[size];
+      });
+    }
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const keyBoard = new Keyboard();
+});
