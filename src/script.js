@@ -132,6 +132,10 @@ const russianLayout = [
 
 class Keyboard {
   constructor() {
+    this.isEnable = {
+
+      register: 0,
+    };
     this.language = 'eng';
     this.createKeyboard();
   }
@@ -152,7 +156,7 @@ class Keyboard {
     this.keyboard.id = 'keyboard';
 
     this.createKeys();
-    this.createKeysText(this.language, 0);
+    this.createKeysText(this.language, this.isEnable.register);
     container.appendChild(this.textarea);
     container.appendChild(this.keyboard);
     document.body.appendChild(container);
@@ -168,19 +172,19 @@ class Keyboard {
     });
   }
 
-  createKeysText(language, size) {
+  createKeysText(language) {
     if (language === 'eng') {
       this.keyboard.querySelectorAll('div').forEach((key, index) => {
         const settings = englishLayout[index];
-        key.innerText = settings[size];
-        key.name = settings[size];
+        key.innerText = settings[this.isEnable.register];
+        key.name = settings[this.isEnable.register];
       });
     }
     if (language === 'rus') {
       this.keyboard.querySelectorAll('div').forEach((key, index) => {
         const settings = russianLayout[index];
-        key.innerText = settings[size];
-        key.name = settings[size];
+        key.innerText = settings[this.isEnable.register];
+        key.name = settings[this.isEnable.register];
       });
     }
     this.capsLockIndicator();
@@ -188,10 +192,11 @@ class Keyboard {
 
   capsLockIndicator() {
     const capsLock = this.keyboard.querySelector('#CapsLock');
-    const indicator = document.createElement('span');
-    indicator.classList.add('indicator');
-    indicator.id = 'indicator';
-    capsLock.appendChild(indicator);
+    const span = document.createElement('span');
+    span.classList.add('indicator');
+    span.id = 'indicator';
+    if (this.isEnable.register === 1) span.classList.add('indicator-active');
+    capsLock.appendChild(span);
   }
 
   handleEvents(code, type) {
@@ -214,6 +219,30 @@ class Keyboard {
           this.textarea.value = this.textarea.value.slice(0, -1);
         }
         break;
+
+      case 'Space':
+        if (type === 'mousedown' || type === 'keydown') {
+          this.textarea.value += ' ';
+        }
+        break;
+
+      case 'Tab':
+        if (type === 'mousedown' || type === 'keydown') {
+          this.textarea.value += '    ';
+        }
+        break;
+
+      case 'Caps Lock':
+        if (type === 'mousedown' || type === 'keydown') {
+          if (this.isEnable.register === 0) {
+            this.isEnable.register = 1;
+          } else {
+            this.isEnable.register = 0;
+          }
+          this.createKeysText(this.language, this.isEnable.register);
+        }
+        break;
+
 
       default:
         if (type === 'mousedown' || type === 'keydown') {

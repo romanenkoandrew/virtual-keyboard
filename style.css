@@ -59,6 +59,6 @@
   top: 5px;
   right: 5px;
 }
-.indicator:active {
+.indicator-active {
   background-color: greenyellow;
 }
