@@ -135,10 +135,8 @@ class Keyboard {
     this.isEnable = {
       alt: false,
       shift: false,
-      caps: false,
-      register: 0,
     };
-    this.language = 'eng';
+    this.language = '';
     this.createKeyboard();
   }
 
@@ -156,6 +154,13 @@ class Keyboard {
 
     this.keyboard.classList.add('keyboard');
     this.keyboard.id = 'keyboard';
+
+    const currentLanguage = localStorage.getItem('language');
+    const currentRegister = localStorage.getItem('register');
+    const currentCaps = localStorage.getItem('caps');
+    this.language = currentLanguage || 'eng';
+    this.isEnable.register = currentRegister || 0;
+    this.isEnable.caps = currentCaps || false;
 
     this.createKeys();
     this.createKeysText(this.language, this.isEnable.register);
@@ -204,8 +209,10 @@ class Keyboard {
   changeLanguage() {
     if (this.language === 'eng') {
       this.language = 'rus';
+      localStorage.setItem('language', this.language);
     } else {
       this.language = 'eng';
+      localStorage.setItem('language', this.language);
     }
     this.createKeysText(this.language, this.isEnable.register);
   }
@@ -214,7 +221,7 @@ class Keyboard {
     const key = document.getElementById(code);
 
     if (type === 'mousedown') this.isEnable.mousedown = key;
-    if (type === 'mouseup') this.isEnable.mousedown.classList.remove('key-light');
+    if (type === 'mouseup') this.isEnable.mousedown.classList.remove('active');
 
     if (type === 'keydown' || type === 'mousedown') key.classList.add('active');
     if (type === 'keyup' || type === 'mouseup') key.classList.remove('active');
@@ -259,6 +266,8 @@ class Keyboard {
             this.isEnable.caps = false;
             this.isEnable.register = 0;
           }
+          localStorage.setItem('caps', this.isEnable.caps);
+          localStorage.setItem('register', this.isEnable.register);
           this.createKeysText(this.language, this.isEnable.register);
         }
         break;
