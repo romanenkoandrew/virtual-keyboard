@@ -149,7 +149,7 @@ class Keyboard {
     container.id = 'container';
 
     this.textarea.classList.add('textarea');
-    this.textarea.setAttribute('placeholder', 'This keyboard was created on Windows');
+    this.textarea.setAttribute('placeholder', 'This keyboard was created on Windows \nShift + Alt = Change language');
     this.textarea.id = 'textarea';
 
     this.keyboard.classList.add('keyboard');
@@ -179,15 +179,15 @@ class Keyboard {
     });
   }
 
-  createKeysText(language) {
-    if (language === 'eng') {
+  createKeysText() {
+    if (this.language === 'eng') {
       this.keyboard.querySelectorAll('div').forEach((key, index) => {
         const settings = englishLayout[index];
         key.innerText = settings[this.isEnable.register];
         key.name = settings[this.isEnable.register];
       });
     }
-    if (language === 'rus') {
+    if (this.language === 'rus') {
       this.keyboard.querySelectorAll('div').forEach((key, index) => {
         const settings = russianLayout[index];
         key.innerText = settings[this.isEnable.register];
@@ -268,7 +268,7 @@ class Keyboard {
           }
           localStorage.setItem('caps', this.isEnable.caps);
           localStorage.setItem('register', this.isEnable.register);
-          this.createKeysText(this.language, this.isEnable.register);
+          this.createKeysText();
         }
         break;
 
@@ -287,17 +287,17 @@ class Keyboard {
           this.isEnable.shift = true;
           if (this.isEnable.caps) {
             this.isEnable.register = 0;
-            this.createKeysText(this.language, this.isEnable.register);
+            this.createKeysText();
             this.isEnable.register = 1;
           } else {
             this.isEnable.register = 1;
-            this.createKeysText(this.language, this.isEnable.register);
+            this.createKeysText();
             this.isEnable.register = 0;
           }
         }
         if (type === 'mouseup' || type === 'keyup') {
           this.isEnable.shift = false;
-          this.createKeysText(this.language, this.isEnable.register);
+          this.createKeysText();
         }
         break;
 
