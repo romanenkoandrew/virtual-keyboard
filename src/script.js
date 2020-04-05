@@ -133,7 +133,9 @@ const russianLayout = [
 class Keyboard {
   constructor() {
     this.isEnable = {
-
+      alt: false,
+      shift: false,
+      caps: false,
       register: 0,
     };
     this.language = 'eng';
@@ -195,14 +197,30 @@ class Keyboard {
     const span = document.createElement('span');
     span.classList.add('indicator');
     span.id = 'indicator';
-    if (this.isEnable.register === 1) span.classList.add('indicator-active');
+    if (this.isEnable.caps) span.classList.add('indicator-active');
     capsLock.appendChild(span);
+  }
+
+  changeLanguage() {
+    if (this.language === 'eng') {
+      this.language = 'rus';
+    } else {
+      this.language = 'eng';
+    }
+    this.createKeysText(this.language, this.isEnable.register);
   }
 
   handleEvents(code, type) {
     const key = document.getElementById(code);
+
+    if (type === 'mousedown') this.isEnable.mousedown = key;
+    if (type === 'mouseup') this.isEnable.mousedown.classList.remove('key-light');
+
     if (type === 'keydown' || type === 'mousedown') key.classList.add('active');
     if (type === 'keyup' || type === 'mouseup') key.classList.remove('active');
+    if (this.isEnable.shift && this.isEnable.alt) {
+      this.changeLanguage();
+    }
 
     switch (key.name) {
       case 'Ctrl':
@@ -235,12 +253,51 @@ class Keyboard {
       case 'Caps Lock':
         if (type === 'mousedown' || type === 'keydown') {
           if (this.isEnable.register === 0) {
+            this.isEnable.caps = true;
             this.isEnable.register = 1;
           } else {
+            this.isEnable.caps = false;
             this.isEnable.register = 0;
           }
           this.createKeysText(this.language, this.isEnable.register);
         }
+        break;
+
+      case 'Alt':
+        if (type === 'mousedown' || type === 'keydown') {
+          this.isEnable.alt = true;
+        }
+        if (type === 'mouseup' || type === 'keyup') {
+          this.isEnable.alt = false;
+        }
+        break;
+
+      case 'Shift':
+
+        if (type === 'mousedown' || type === 'keydown') {
+          this.isEnable.shift = true;
+          if (this.isEnable.caps) {
+            this.isEnable.register = 0;
+            this.createKeysText(this.language, this.isEnable.register);
+            this.isEnable.register = 1;
+          } else {
+            this.isEnable.register = 1;
+            this.createKeysText(this.language, this.isEnable.register);
+            this.isEnable.register = 0;
+          }
+        }
+        if (type === 'mouseup' || type === 'keyup') {
+          this.isEnable.shift = false;
+          this.createKeysText(this.language, this.isEnable.register);
+        }
+        break;
+
+      case 'Ru':
+        if (type === 'mousedown') this.changeLanguage();
+        break;
+
+      case 'En':
+        if (type === 'mousedown') this.changeLanguage();
         break;
 
 
@@ -269,6 +326,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.addEventListener('keydown', (el) => {
     el.preventDefault();
+    if (el.code === 'CapsLock' || el.code === 'ShiftLeft' || el.code === 'ShiftRight') {
+      let allowed;
+      if (el.repeat !== undefined) {
+        allowed = !el.repeat;
+      }
+      if (!allowed) return;
+      allowed = false;
+    }
+
     keyBoard.textarea.focus();
     keyBoard.handleEvents(el.code, el.type);
   });
